@@ -6,9 +6,10 @@
 
 <style>
 
+/* Load the font correctly for GitHub Pages */
 @font-face {
     font-family: "Minecraft";
-    src: url("minecraft.ttf") format("truetype");
+    src: url("./minecraft.ttf") format("truetype");
 }
 
 body {
@@ -18,6 +19,7 @@ body {
     font-family: "Minecraft", monospace;
 }
 
+/* Matrix Grid */
 #grid {
     position: fixed;
     top: 0;
@@ -38,7 +40,6 @@ body {
 }
 
 /* Center flip card */
-
 #centerImage {
     position: fixed;
     top: 50%;
@@ -94,32 +95,30 @@ body {
     <div class="flip-card" onclick="flipCard()">
         <div class="flip-inner" id="flipInner">
             <div class="flip-front">
-                <img src="image2.png">
+                <img src="./image2.png" alt="Front Image">
             </div>
             <div class="flip-back">
-                <img src="image.png">
+                <img src="./image.png" alt="Back Image">
             </div>
         </div>
     </div>
 </div>
 
 <script>
-
+// MATRIX GRID SCRIPT
 const grid = document.getElementById("grid");
 const chars = "WHOAMI?whoami!";
 
-let cellSize = 20;
-
-let columns = Math.floor(window.innerWidth / cellSize);
-let rows = Math.floor(window.innerHeight / cellSize);
+const cellSize = 20;
+const columns = Math.floor(window.innerWidth / cellSize);
+const rows = Math.floor(window.innerHeight / cellSize);
 
 grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
 grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-let cells = [];
-
+const cells = [];
 for (let i = 0; i < columns * rows; i++) {
-    let cell = document.createElement("div");
+    const cell = document.createElement("div");
     cell.className = "cell";
     grid.appendChild(cell);
     cells.push(cell);
@@ -137,14 +136,13 @@ function updateGrid() {
     });
 }
 
-setInterval(updateGrid, 5);
+// Use 50ms interval instead of 5ms for GitHub Pages stability
+setInterval(updateGrid, 50);
 
-/* Flip function */
-
+// FLIP FUNCTION
 function flipCard() {
     document.getElementById("flipInner").classList.toggle("flipped");
 }
-
 </script>
 
 </body>
