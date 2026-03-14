@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Matrix Grid Around Image</title>
+
+<style>
+
+@font-face {
+    font-family: "Minecraft";
+    src: url("minecraft.ttf") format("truetype");
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    font-family: "Minecraft", monospace;
+}
+
+#grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    color: #ff0000;
+    font-size: 16px;
+    user-select: none;
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+}
+
+/* Center flip card */
+
+#centerImage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    perspective: 1000px;
+    z-index: 10;
+}
+
+.flip-card {
+    width: 300px;
+    height: 300px;
+    cursor: pointer;
+}
+
+.flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+.flip-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+.flip-front, .flip-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.flip-front img,
+.flip-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.flip-back {
+    transform: rotateY(180deg);
+}
+
+</style>
+</head>
+<body>
+
+<div id="grid"></div>
+
+<div id="centerImage">
+    <div class="flip-card" onclick="flipCard()">
+        <div class="flip-inner" id="flipInner">
+            <div class="flip-front">
+                <img src="image2.png">
+            </div>
+            <div class="flip-back">
+                <img src="image.png">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+const grid = document.getElementById("grid");
+const chars = "WHOAMI?whoami!";
+
+let cellSize = 20;
+
+let columns = Math.floor(window.innerWidth / cellSize);
+let rows = Math.floor(window.innerHeight / cellSize);
+
+grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+let cells = [];
+
+for (let i = 0; i < columns * rows; i++) {
+    let cell = document.createElement("div");
+    cell.className = "cell";
+    grid.appendChild(cell);
+    cells.push(cell);
+}
+
+function randomChar() {
+    return chars[Math.floor(Math.random() * chars.length)];
+}
+
+function updateGrid() {
+    cells.forEach(cell => {
+        if (Math.random() < 0.15) {
+            cell.textContent = randomChar();
+        }
+    });
+}
+
+setInterval(updateGrid, 5);
+
+/* Flip function */
+
+function flipCard() {
+    document.getElementById("flipInner").classList.toggle("flipped");
+}
+
+</script>
+
+</body>
+</html>
