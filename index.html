@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>WHO AM I? </title>
+<title>WHO AM I?</title>
+<link rel="icon" type="image/png" href="./logo.png">
 
 <style>
 
-/* Minecraft font (lowercase file name) */
+/* Minecraft font */
 @font-face {
     font-family: "Minecraft";
     src: url("./minecraft.ttf") format("truetype");
@@ -17,6 +18,47 @@ body {
     overflow: hidden;
     background: black;
     font-family: "Minecraft", monospace;
+}
+
+/* Progress bar container */
+#progressContainer {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 500px;  /* max width same as flip card */
+    width: 90%;        /* allows side spacing on small screens */
+    background: black;
+    padding: 10px 20px; /* space inside container on left/right */
+    box-sizing: border-box;
+    z-index: 20;
+    text-align: center;
+}
+
+/* Progress text */
+#progressText {
+    font-family: "Minecraft", monospace;
+    color: white;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+/* Progress bar background */
+#progressBar {
+    width: 100%;
+    height: 20px;
+    background: #333;
+    border-radius: 0;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+/* Progress fill (33%) */
+#progressFill {
+    width: 33%; /* set progress here */
+    height: 100%;
+    background: red;
+    border-radius: 0;
 }
 
 /* Matrix grid */
@@ -90,8 +132,18 @@ body {
 </head>
 <body>
 
+<!-- Progress bar -->
+<div id="progressContainer">
+    <div id="progressText">TRAILER VIDEO PROGRESS:</div>
+    <div id="progressBar">
+        <div id="progressFill"></div>
+    </div>
+</div>
+
+<!-- Matrix grid -->
 <div id="grid"></div>
 
+<!-- Flip card -->
 <div id="centerImage">
     <div class="flip-card" onclick="flipCard()">
         <div class="flip-inner" id="flipInner">
@@ -109,10 +161,9 @@ body {
 </div>
 
 <script>
-
+/* MATRIX GRID */
 const grid = document.getElementById("grid");
 const chars = "WHOAMI?whoami!";
-
 const cellSize = 20;
 const columns = Math.floor(window.innerWidth / cellSize);
 const rows = Math.floor(window.innerHeight / cellSize);
@@ -143,10 +194,10 @@ function updateGrid() {
 
 setInterval(updateGrid, 50);
 
+/* FLIP CARD */
 function flipCard() {
     document.getElementById("flipInner").classList.toggle("flipped");
 }
-
 </script>
 
 </body>
