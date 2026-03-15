@@ -198,6 +198,56 @@ setInterval(updateGrid, 50);
 function flipCard() {
     document.getElementById("flipInner").classList.toggle("flipped");
 }
+
+/* FLIP CARD EASTER EGG WITH FAST AUTO COVER */
+let clickCount = 0;
+const clickThresholdForImage3 = 20;
+const maxSmiles = 100; // more overlays for full coverage
+
+const flipInner = document.getElementById("flipInner");
+
+function flipCard() {
+    clickCount++;
+
+    // Flip card normally
+    flipInner.classList.toggle("flipped");
+
+    // After 20 clicks, switch to image3 and start auto-cover
+    if(clickCount === clickThresholdForImage3){
+        const front = flipInner.querySelector(".flip-front img");
+        const back = flipInner.querySelector(".flip-back img");
+        front.src = "./image3.png";
+        back.src = "./image3.png";
+
+        startAutoCover();
+    }
+}
+
+// Automatically spawn smiles faster
+function startAutoCover() {
+    let smileCount = 0;
+    const interval = setInterval(() => {
+        // Spawn multiple at once for faster coverage
+        for(let i=0;i<3;i++){
+            const smile = document.createElement("img");
+            smile.src = "./smile.png";
+            smile.style.position = "fixed";
+            smile.style.top = Math.random() * window.innerHeight + "px";
+            smile.style.left = Math.random() * window.innerWidth + "px";
+            smile.style.width = 100 + "px";
+            smile.style.height = 100 + "px";
+            smile.style.pointerEvents = "none";
+            smile.style.zIndex = 9999;
+            document.body.appendChild(smile);
+            smileCount++;
+        }
+
+        if(smileCount >= maxSmiles){
+            clearInterval(interval);
+            setTimeout(()=>window.location.href="experiment.html", 200);
+        }
+    }, 50); // spawn every 50ms
+}
 </script>
 
 </body>
