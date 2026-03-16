@@ -2,163 +2,434 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Administrator Tab</title>
-<link rel="icon" type="image/png" href="./smile.png">
+<title>Experiment</title>
+
 <style>
-@font-face { font-family: 'Minecraft'; src: url('minecraft.ttf') format('truetype'); }
-body { background-color: #0000ff; color: #fff; font-family: 'Minecraft', monospace; margin:0; padding:20px; }
-#login-screen { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; }
-#login-screen input { font-family:'Minecraft', monospace; padding:10px; margin:5px 0; font-size:16px; border:2px solid #fff; background-color:#003366; color:#fff; outline:none; }
-#login-screen button { font-family:'Minecraft', monospace; padding:10px 20px; margin-top:10px; font-size:16px; border:2px solid #fff; background-color:#0055aa; color:#fff; cursor:pointer; }
-#login-error { color:yellow; margin-top:10px; text-shadow:0 0 2px yellow; }
 
-#boot-screen { display:none; padding:20px; }
-div, span { text-shadow:0 0 1px #fff; }
-.module { margin-bottom:20px; }
-.bar-container { width:500px; height:20px; border:2px solid #fff; background-color:#003366; margin-top:5px; position:relative; overflow:hidden; }
-.bar-fill { height:100%; background-color:#fff; width:0%; box-shadow:0 0 2px #fff; transition: background-color 0.2s ease; }
-.bar-fill.yellow { background-color:yellow; box-shadow:0 0 4px yellow; }
-.text-yellow { color:yellow; text-shadow:0 0 1px yellow; }
+@font-face{
+font-family:"Minecraft";
+src:url("./minecraft.ttf") format("truetype");
+}
 
-#player-list { margin-top:30px; }
-.player-entry { margin-bottom:15px; }
+body{
+background:#0000ff;
+color:white;
+font-family:"Minecraft", monospace;
+margin:0;
+padding:20px;
+}
+
+/* LOGIN */
+
+#login-screen{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+#login-screen input{
+font-family:"Minecraft";
+padding:10px;
+margin:5px 0;
+border:2px solid white;
+background:#003366;
+color:white;
+}
+
+#login-screen button{
+font-family:"Minecraft";
+padding:10px 20px;
+border:2px solid white;
+background:#0055aa;
+color:white;
+cursor:pointer;
+}
+
+#login-error{
+color:yellow;
+margin-top:10px;
+}
+
+/* letter icon */
+
+#letterHint{
+display:none;
+height:28px;
+margin-left:10px;
+cursor:pointer;
+vertical-align:middle;
+}
+
+/* BOOT */
+
+#boot-screen{
+display:none;
+}
+
+.module{
+margin-bottom:20px;
+}
+
+.bar-container{
+width:500px;
+height:20px;
+border:2px solid white;
+background:#003366;
+margin-top:5px;
+}
+
+.bar-fill{
+height:100%;
+background:white;
+width:0%;
+}
+
+.bar-fill.yellow{
+background:yellow;
+}
+
+.text-yellow{
+color:yellow;
+}
+
+#player-list{
+margin-top:40px;
+}
+
+.player-entry{
+margin-bottom:15px;
+}
+
 </style>
 </head>
+
 <body>
 
+<!-- LOGIN -->
+
 <div id="login-screen">
-<h2>Login</h2>
+
+<h2>
+Login
+<img src="./letter.png" id="letterHint" onclick="openLetter()">
+</h2>
+
 <input type="text" id="username" placeholder="Username">
 <input type="password" id="password" placeholder="Password">
+
 <button id="login-btn">Login</button>
+
 <div id="login-error"></div>
+
 </div>
 
+<!-- BOOT -->
+
 <div id="boot-screen">
+
 <div id="output"></div>
+
 <div id="player-list"></div>
+
 </div>
 
 <script>
-const correctUsername="Alfi2a";
-const correctPassword="Password";
+
+/* LOGIN */
+
+const correctUsername="Administrator";
+const correctPassword="Access0110";
 
 const loginBtn=document.getElementById("login-btn");
 const usernameInput=document.getElementById("username");
 const passwordInput=document.getElementById("password");
 const loginError=document.getElementById("login-error");
+
 const loginScreen=document.getElementById("login-screen");
 const bootScreen=document.getElementById("boot-screen");
+
 const output=document.getElementById("output");
-const playerListDiv=document.getElementById("player-list");
+const playerList=document.getElementById("player-list");
 
-function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
-
-async function typewriter(text, container, speed=25){
-  container.textContent="";
-  for(let i=0;i<text.length;i++){ container.textContent+=text[i]; await sleep(speed); }
-}
-
-function generateUUID(){
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
-    const r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8); return v.toString(16);
-  });
-}
-
-async function loadBar(container, failAt=null){
-  const barContainer=document.createElement("div"); barContainer.className="bar-container";
-  const barFill=document.createElement("div"); barFill.className="bar-fill";
-  barContainer.appendChild(barFill); container.appendChild(barContainer);
-  let progress=0;
-  while(progress<100){
-    const step=Math.floor(Math.random()*5)+1; progress+=step;
-    if(failAt && progress>=failAt){progress=failAt; barFill.style.width=progress+"%"; barFill.classList.add("yellow"); break;}
-    if(progress>100) progress=100;
-    barFill.style.width=progress+"%";
-    await sleep(Math.floor(Math.random()*70)+20);
-  }
-  return barFill;
-}
-
-async function loadModule(name){
-  const moduleDiv=document.createElement("div"); moduleDiv.className="module"; output.appendChild(moduleDiv);
-  const title=document.createElement("div"); moduleDiv.appendChild(title);
-  await typewriter(`Loading ${name}...`, title,25);
-
-  if(name==="Player.Memory"){
-    await loadBar(moduleDiv,70);
-    const error=document.createElement("div"); error.className="text-yellow"; moduleDiv.appendChild(error);
-    await typewriter("[!] Memory failure", error,25);
-    const skip=document.createElement("div"); skip.className="text-yellow"; moduleDiv.appendChild(skip);
-    await typewriter("[!] Skipped memory",skip,25);
-  } else if(name==="Player.Identity"){
-    await loadBar(moduleDiv,50);
-    const error=document.createElement("div"); error.className="text-yellow"; moduleDiv.appendChild(error);
-    await typewriter("[!] Missing memory", error,25);
-    const retry=document.createElement("div"); moduleDiv.appendChild(retry);
-    await typewriter("Creating new memory...", retry,25);
-    await loadBar(moduleDiv);
-  } else {
-    await loadBar(moduleDiv);
-  }
-
-  const complete=document.createElement("div"); moduleDiv.appendChild(complete);
-  await typewriter("Complete",complete,25);
-  window.scrollTo(0,document.body.scrollHeight);
-}
-
-async function createPlayers(count=5){
-  const uuids=[];
-  for(let i=0;i<count;i++){
-    const uuid=generateUUID(); uuids.push(uuid);
-    const line=document.createElement("div"); output.appendChild(line);
-    await typewriter(`> Creating Player\nPlayer-UUID: ${uuid}`, line,20);
-    await sleep(100);
-  }
-  return uuids;
-}
-
-async function showPlayerList(uuids){
-  playerListDiv.innerHTML="<h3>Player List</h3>";
-  for(const uuid of uuids){
-    const entry=document.createElement("div"); entry.className="player-entry";
-    await typewriter(`Player-UUID: ${uuid}\nStatus: Alive | Contained | Conscious`, entry,20);
-    playerListDiv.appendChild(entry);
-    await sleep(50);
-  }
-}
-
-async function startBootSequence(){
-  const header=document.createElement("div"); output.appendChild(header);
-  await typewriter("> Creating experiment",header,30);
-
-  const init=document.createElement("div"); output.appendChild(init);
-  await typewriter("Initializing player", init, 30);
-  await sleep(500);
-
-  const modules=[
-    "Player.Brain","Player.Blood","Player.NervousSystem","Player.MotorFunctions",
-    "Player.Vision","Player.Audio","Player.Memory","Player.Emotion",
-    "Player.Logic","Player.Language","Player.Identity"
-  ];
-
-  for(const mod of modules){ await loadModule(mod); }
-
-  // After all loading, create and show player list
-  const uuids = await createPlayers(5);
-  await showPlayerList(uuids);
-
-  const finished=document.createElement("div"); output.appendChild(finished);
-  await typewriter("Player initialization complete.", finished,30);
+function openLetter(){
+window.location.href="letter.html";
 }
 
 loginBtn.addEventListener("click",()=>{
-  if(usernameInput.value===correctUsername && passwordInput.value===correctPassword){
-    loginScreen.style.display="none";
-    bootScreen.style.display="block";
-    startBootSequence();
-  } else loginError.textContent="Incorrect username or password!";
+
+if(usernameInput.value===correctUsername && passwordInput.value===correctPassword){
+
+loginScreen.style.display="none";
+bootScreen.style.display="block";
+
+startBootSequence();
+
+}else{
+
+loginError.textContent="Incorrect username or password!";
+document.getElementById("letterHint").style.display="inline";
+
+}
+
 });
+
+/* UTIL */
+
+function sleep(ms){
+return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+async function typewriter(text,container,speed=20){
+
+container.textContent="";
+
+for(let i=0;i<text.length;i++){
+container.textContent+=text[i];
+await sleep(speed);
+}
+
+}
+
+/* UUID */
+
+function generateUUID(){
+
+return'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+
+const r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);
+
+return v.toString(16);
+
+});
+
+}
+
+/* LOADING BAR */
+
+async function loadBar(container,failAt=null){
+
+const barContainer=document.createElement("div");
+barContainer.className="bar-container";
+
+const barFill=document.createElement("div");
+barFill.className="bar-fill";
+
+barContainer.appendChild(barFill);
+container.appendChild(barContainer);
+
+let progress=0;
+
+while(progress<100){
+
+const step=Math.floor(Math.random()*5)+1;
+
+progress+=step;
+
+if(failAt && progress>=failAt){
+
+progress=failAt;
+
+barFill.style.width=progress+"%";
+barFill.classList.add("yellow");
+
+break;
+
+}
+
+if(progress>100)progress=100;
+
+barFill.style.width=progress+"%";
+
+await sleep(Math.random()*80+20);
+
+}
+
+}
+
+/* MODULE LOADING */
+
+async function loadModule(name){
+
+const module=document.createElement("div");
+module.className="module";
+
+output.appendChild(module);
+
+const title=document.createElement("div");
+
+module.appendChild(title);
+
+await typewriter("Loading "+name+"...",title);
+
+if(name==="Player.Memory"){
+
+await loadBar(module,70);
+
+const err=document.createElement("div");
+err.className="text-yellow";
+
+module.appendChild(err);
+
+await typewriter("[!] Memory failure",err);
+
+const skip=document.createElement("div");
+skip.className="text-yellow";
+
+module.appendChild(skip);
+
+await typewriter("[!] Skipped memory",skip);
+
+}
+
+else if(name==="Player.Identity"){
+
+await loadBar(module,50);
+
+const err=document.createElement("div");
+err.className="text-yellow";
+
+module.appendChild(err);
+
+await typewriter("[!] Missing memory",err);
+
+const retry=document.createElement("div");
+
+module.appendChild(retry);
+
+await typewriter("Creating new memory...",retry);
+
+await loadBar(module);
+
+}
+
+else{
+
+await loadBar(module);
+
+}
+
+const done=document.createElement("div");
+
+module.appendChild(done);
+
+await typewriter("Complete",done);
+
+}
+
+/* PLAYER CREATION */
+
+async function createPlayers(count=5){
+
+const uuids=[];
+
+for(let i=0;i<count;i++){
+
+const uuid=generateUUID();
+
+uuids.push(uuid);
+
+const line=document.createElement("div");
+
+output.appendChild(line);
+
+await typewriter("> Creating Player",line);
+
+const idLine=document.createElement("div");
+
+output.appendChild(idLine);
+
+await typewriter("Player-UUID: "+uuid,idLine);
+
+await sleep(100);
+
+}
+
+return uuids;
+
+}
+
+/* PLAYER LIST */
+
+async function showPlayers(uuids){
+
+const title=document.createElement("h3");
+title.textContent="Player List";
+
+playerList.appendChild(title);
+
+for(const uuid of uuids){
+
+const entry=document.createElement("div");
+entry.className="player-entry";
+
+playerList.appendChild(entry);
+
+await typewriter("Player-UUID: "+uuid,entry);
+
+const status=document.createElement("div");
+
+entry.appendChild(status);
+
+await typewriter("Status: Alive | Contained | Conscious",status);
+
+}
+
+}
+
+/* BOOT SEQUENCE */
+
+async function startBootSequence(){
+
+const header=document.createElement("div");
+
+output.appendChild(header);
+
+await typewriter("> Creating experiment",header);
+
+const init=document.createElement("div");
+
+output.appendChild(init);
+
+await typewriter("Initializing player",init);
+
+await sleep(400);
+
+const modules=[
+
+"Player.Brain",
+"Player.Blood",
+"Player.NervousSystem",
+"Player.MotorFunctions",
+"Player.Vision",
+"Player.Audio",
+"Player.Memory",
+"Player.Emotion",
+"Player.Logic",
+"Player.Language",
+"Player.Identity"
+
+];
+
+for(const mod of modules){
+
+await loadModule(mod);
+
+}
+
+const uuids=await createPlayers(5);
+
+await showPlayers(uuids);
+
+const finish=document.createElement("div");
+
+output.appendChild(finish);
+
+await typewriter("Player initialization complete.",finish);
+
+}
+
 </script>
 
 </body>
